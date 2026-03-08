@@ -32,6 +32,15 @@ public class Library {
         return fd.borrow();
     }
 
+    public boolean removeBook(String isbn){
+        if(!book_repository.containsKey(isbn))
+            return false;
+        Book remBook = book_repository.remove(isbn);
+        if(remBook==null)
+            return false;
+        return true;
+    }
+
     public boolean returnBook(String isbn){
         Book fd =book_repository.get(isbn);
         if (fd == null)
@@ -39,6 +48,15 @@ public class Library {
         fd.returnBook();
         return true;
     }
-    public ArrayList<Book> findBook_byTitle(String name){
+    public ArrayList<Book> findBook_byTitle(String keyword){
+        ArrayList<Book> match_list = new ArrayList<Book>();
+        for (String word : book_repository.keySet()){
+             Book book = book_repository.get(word);
+             String title = book.getTitle();
+             if(title.contains(keyword)){
+                match_list.add(book);
+             }
+        }
+        return match_list;
     }
 }
