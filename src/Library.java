@@ -6,6 +6,12 @@
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.io.FileWriter;      // 写入文件
+import java.io.IOException;      // 异常类
+import java.io.Writer;
+import java.io.BufferedReader;   // 读取文件（缓冲）
+import java.io.FileReader;      // 读取文件
+import javax.print.DocFlavor.STRING;
 
 public class Library {
     private HashMap<String,Book> book_repository;
@@ -41,6 +47,17 @@ public class Library {
         return true;
     }
 
+    public ArrayList<Book> findBook_byAuthor(String keyString){
+        ArrayList<Book> match_list = new ArrayList<Book>();
+        for(String word:book_repository.keySet()){
+            Book book = book_repository.get(word);
+            String author = book.getAuthor();
+            if(author.contains(keyString)){
+                match_list.add(book);
+            }
+        }
+        return match_list;
+    }
     public boolean returnBook(String isbn){
         Book fd =book_repository.get(isbn);
         if (fd == null)
@@ -58,5 +75,42 @@ public class Library {
              }
         }
         return match_list;
+    }
+
+    public boolean saveToFile(String filename) {
+        try {
+            FileWriter fileWriter = new FileWriter(filename);
+            for(Book book2: book_repository.values()){
+                String isbn = book2.getIsbn();
+                String title = book2.getTitle();
+                String author = book2.getAuthor();
+                String stock = Integer.toString(book2.getStock());
+                StringBuilder sb = new StringBuilder();
+                sb.append(isbn).append(",").append(title).append(",").append(author).append(",").append(stock);
+                String csvString =  sb.toString();
+                fileWriter.write(csvString+"\n");
+            }
+            fileWriter.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("文件保存失败");
+            return false;
+        }
+    }
+
+    public boolean loadFromFile(String filename){
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))){
+
+            String line;
+            while( (line = reader.readLine())!= null){
+                String [] parts = line.split(",");
+                Book book = new Book(parts[0],parts[1],parts[2],Integer.parseInt(parts[3]) );
+                book_repository.put(parts[0],book );
+            }
+            return  true;
+        } catch (Exception e) {
+            System.out.println("文件读取失败");
+            return false;
+        }
     }
 }

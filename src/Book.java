@@ -32,7 +32,7 @@ public class Book {
     }
     @Override
     public String toString() {
-        return "《"+ title +"》"+ " - " + author +"，"+"库存"+":"+ stock;
+        return "《"+ title +"》"+ " - " + author +"，"+"库存"+":"+ stock +"isbn为:"+ isbn;
     }
 
     public String getIsbn() {
